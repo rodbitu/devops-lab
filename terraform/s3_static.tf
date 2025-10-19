@@ -1,3 +1,10 @@
+resource "aws_s3_account_public_access_block" "disable_block" {
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
 resource "aws_s3_bucket" "site" {
   bucket        = "${var.project_name}-site-${random_id.suffix.hex}"
   force_destroy = true

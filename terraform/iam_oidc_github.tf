@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "ga_permissions" {
       "ecr:*",
       "lambda:*",
       "apigateway:*",
-      "iam:PassRole",
+      "iam:*",
       "s3:*",
       "cloudwatch:*",
       "logs:*"

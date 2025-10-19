@@ -1,0 +1,63 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "terraform/**"
+      - "web/**"
+      - ".github/workflows/deploy-infra.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GA_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: terraform
+        env:
+          TF_VAR_github_org: ${{ github.repository_owner }}
+          TF_VAR_github_repo: ${{ github.event.repository.name }}
+        run: terraform apply -auto-approve
+
+      - name: Get outputs
+        id: tfout
+        working-directory: terraform
+        run: |
+          echo "API_URL=$(terraform output -raw api_url)" >> $GITHUB_OUTPUT
+          echo "SITE=$(terraform output -raw static_site_url)" >> $GITHUB_OUTPUT
+
+      - name: Build index.html with API URL
+        run: |
+          API="${{ steps.tfout.outputs.API_URL }}"
+          sed "s|%%API_URL%%|$API|g" web/index.html > web/_index.html
+
+      - name: Upload to S3 website
+        run: |
+          BUCKET=$(terraform -chdir=terraform state show aws_s3_bucket.site | awk '/bucket =/ {print $3}')
+          aws s3 cp web/_index.html s3://$BUCKET/index.html --content-type text/html
+
+      - name: Print URLs
+        run: |
+          echo "API:  ${{ steps.tfout.outputs.API_URL }}/hello"
+          echo "SITE: ${{ steps.tfout.outputs.SITE }}"

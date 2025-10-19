@@ -1,0 +1,104 @@
+# ===================================
+# 🌍 DevOps Lab - .gitignore
+# ===================================
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.egg-info/
+.env
+.venv/
+venv/
+ENV/
+*.log
+
+# ---- Docker ----
+*.tar
+*.pid
+.docker/
+docker-compose.override.yml
+# Ignore imagens buildadas localmente
+*.img
+*.qcow2
+
+# ---- Terraform ----
+*.tfstate
+*.tfstate.*
+crash.log
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+# Evita arquivos locais ou remotos de state
+*.backup
+*.tfplan
+
+# ---- AWS ----
+# Evita expor credenciais locais
+.aws/
+*.pem
+*.key
+*.crt
+*.csr
+*.zip
+*.tfbackend
+*terraform.tfstate.backup
+
+# ---- IDEs e Editores ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# ---- GitHub Actions cache ----
+.github/workflows/*.lock
+.github/workflows/*_cache/
+.github/actions/*_cache/
+
+# ---- Logs e Temp ----
+*.log
+logs/
+tmp/
+temp/
+.cache/
+*.out
+
+# ---- Build & Artifacts ----
+dist/
+build/
+*.egg
+*.tar.gz
+*.whl
+
+# ---- Node/npm (caso futuro) ----
+node_modules/
+package-lock.json
+npm-debug.log*
+
+# ---- Web site gerado ----
+web/_index.html
+web/dist/
+web/build/
+
+# ---- Outras ferramentas ----
+.env.local
+.env.development
+.env.production
+.env.test
+
+# ---- Custom (lab local) ----
+# arquivo de saída do script python, caso use
+output.json
+resultados.txt

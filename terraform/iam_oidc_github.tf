@@ -57,6 +57,4 @@ resource "aws_iam_role_policy_attachment" "ga_attach" {
   policy_arn = aws_iam_policy.ga_policy.arn
 }
 
-output "ga_role_arn" {
-  value = aws_iam_role.github_actions.arn
-}
+
